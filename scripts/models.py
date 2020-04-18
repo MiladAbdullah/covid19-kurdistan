@@ -54,3 +54,4 @@ def PlotSimple (forecast_list,
     # show a legend on the plot 
     plt.legend() 
     plt.savefig('../charts/Models/Simple_%s.png'%filename)
+    
