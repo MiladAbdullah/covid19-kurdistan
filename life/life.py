@@ -12,6 +12,7 @@ import random as rnd
 from random import randint,random
 from matplotlib import pyplot as plt
 import matplotlib
+import math
 
 from PIL import Image
 import numpy as np
@@ -49,8 +50,8 @@ class Place:
         self.name= name
     # find a random location within the house
     def settle (self):
-        new_x = self.location[0]+(random()*self.size)
-        new_y = self.location[1]+(random()*self.size)
+        new_x = self.location[1]+(randint(1,8))
+        new_y = self.location[0]+(randint(1,8))
         return (new_x,new_y)
     def __str__ (self):
         return '%s at %d,%d'%(self.name,self.location[0],self.location[1])
@@ -61,8 +62,8 @@ class Place:
     
     def draw(self,my_location,data):
         self.location = my_location
-        start_x = int(self.location[0]*WRes)
-        start_y= int(self.location[1]*HRes)
+        start_x = int(self.location[1]*WRes)
+        start_y= int(self.location[0]*HRes)
         end_x = int(start_x+self.size*HRes)
         end_y = int(start_y+self.size*HRes)
         
@@ -70,7 +71,7 @@ class Place:
         return data
     
 class Person:
-    size = 0.01
+    size = 3
     person_colors = {'male healthy':[72, 15, 105] , 
                      'female healthy':[171, 44, 245],
                      'male infected': [153, 52, 86],
@@ -79,7 +80,7 @@ class Person:
                      'female recovered':[140, 212, 201]
                      }
     
-    def __init__ (self, home, work,age,occupation):
+    def __init__ (self, home, work,age,occupation,world):
         self.gender = rnd.choice(['male','female'])
         self.location = home.settle()
         self.status = 'healthy'
@@ -88,14 +89,55 @@ class Person:
         self.occupation = occupation
         self.age = age
         self.normal_behavior = Behavior(self)
-    def random_move (self):
-        new_x = self.location[0]+rnd.choice([-0.01,0.01])
-        new_y = self.location[1]+rnd.choice([-0.01,0.01])
-        if min(new_x,new_y)<=0 or max(new_x,new_y)>=1:
-            new_x=0.5
-            new_y=0.5
+        self.current_place = self.home
+        self.future_place = self.home
+        self.world = world
+    def extract_sides(self,point):
+        return [
+                (point[0]+1,point[1]),      #east
+                (point[0]+1,point[1]+1),    #north east
+                (point[0]+1,point[1]-1),    #south east
+                (point[0],point[1]+1),      #north
+                (point[0],point[1]-1),      #south
+                (point[0]-1,point[1]),      #west
+                (point[0]-1,point[1]+1),    #north west
+                (point[0]-1,point[1]-1),    #south west
+            ]
+       
+    def move (self,minute):
+        self.future_place= self.normal_behavior.next_place_test(self,minute)
         
-        self.location = (new_x,new_y)
+        # if the person has gotten to the place where he/she has to be
+        if self.current_place==self.future_place:
+            self.location = self.current_place.settle()
+            #return 'i m happy at %d:%d'%(math.floor(minute/60),minute-(math.floor(minute/60)*60))
+        else:
+            # inside a building, must exit, 
+            if self.world.road_map[self.location[1],self.location[0]]==0:
+                exit_x= self.current_place.location[1]-1
+                exit_y= self.current_place.location[0]-1
+                self.location = (exit_x,exit_y)
+                #return ('i m at %d,%d goint to %s at %d:%d'%(self.location[0],self.location[1],str(self.future_place),math.floor(minute/60),minute-(math.floor(minute/60)*60)))
+            else:
+                target_map = self.world.wave_map[self.future_place]
+                current_value = target_map[self.location [1],self.location[0]]
+                points = self.extract_sides(self.location)
+                
+                for point in points:
+                    try:
+                        t_value = target_map[point [1],point[0]]
+                        if t_value !=0 and t_value<current_value:
+                            self.location = point
+                            break
+                    except:
+                        pass
+                if target_map[self.location [1],self.location[0]]==1:
+                    self.current_place= self.world.map_dict[self.location]
+                #return str(current_value)
+                    
+                
+                
+            
     
     def style(self):
         return [self.location, self.person_colors["%s %s"%(self.gender,self.status)]]
@@ -103,10 +145,10 @@ class Person:
     def render(self):
         if self.status == 'dead':
             return None
-        start_x = int(self.location[0]*WRes)
-        start_y= int(self.location[1]*HRes)
-        end_x = int(start_x+self.size*WRes)
-        end_y = int(start_y+self.size*WRes)
+        start_x = int(self.location[1]*WRes)
+        start_y= int(self.location[0]*HRes)
+        end_x = int(start_x+self.size)
+        end_y = int(start_y+self.size)
         
         info ={
                 'start_x':start_x,
@@ -124,7 +166,7 @@ class World:
     work_names = ['School','University','Office','Market']
     fun_places = ['Sport','Community','Park','Cafe','Market']    
     configuration = {'Block Size':5, 'Infected':0.05, 'Recovery Days Range':(10,15),
-                     'Death Rate': 0.01, 'Male Female Rate':(1,1), 'Max Age':90,  'Min Age':10,
+                     'Death Rate': 0.01, 'Male Female Rate':(1,1), 'Max Age':30,  'Min Age':20,
                      'Adult Age':18, 'Retired Age':65, 'Population':100}
     
     
@@ -172,15 +214,15 @@ class World:
         for i in range(5,100,self.configuration['Block Size']*4):
             for j in range(5,100,self.configuration['Block Size']*4):
                 if total>=0:
-                    self.map_dict[(i,j)]= self.places[total]
-                    self.places[total].location = (i,j)
+                    self.map_dict[(j,i)]= self.places[total]
+                    self.places[total].location = (j,i)
                     total = total-1
         """
         apply wave algorithm for each place, for direction finding for people
         """
         for i in range(100):
             for j in range(100):
-                    self.road_map[i,j]=self.is_road((i,j))
+                    self.road_map[j,i]=self.is_road((j,i))
         for place in self.places:
             self.wave_map[place]=self.wave(place)
         
@@ -213,7 +255,7 @@ class World:
                         occupation = 'Student'
                         work = rnd.choice(self.categories['School'])
                         
-            person = Person(home,work,age,occupation)
+            person = Person(home,work,age,occupation,self)
             self.people.append(person)
 
 
@@ -258,20 +300,20 @@ class World:
        
             
         stack = [place.location]
-        res[place.location[0],place.location[1]]=1
+        res[place.location[1],place.location[0]]=1
         
         while len(stack)>0:
             target = stack.pop(0)
-            map_v = res[target[0],target[1]]
+            map_v = res[target[1],target[0]]
             new_list = extract_sides(target)
             for point in new_list:
                 v = self.what_is (point)
                 if v==None:
                     continue
                 if v==1: #road
-                    current_v = res[point[0],point[1]]
+                    current_v = res[point[1],point[0]]
                     if current_v == 0 or current_v>map_v+1:
-                        res[point[0],point[1]]=map_v+1
+                        res[point[1],point[0]]=map_v+1
                         stack.append(point)
         return res
     """
@@ -286,7 +328,7 @@ class World:
 
     def move_people(self):
         for person in self.people:
-            person.random_move() 
+            person.move() 
     
 #        
     def show_people(self):
@@ -295,8 +337,14 @@ class World:
             style = person.render()
             if style==None:
                 continue
-            people_map[style['start_x']:style['end_x'],style['start_y']:style['end_y']]=style['color']
+            people_map[style['start_y']:style['end_y'],style['start_x']:style['end_x']]=style['color']
         return people_map
+    
+    def run(self,minutes):
+        
+        for person in self.people:
+            person.move(minutes)
+    
 
 class Behavior:
     
@@ -311,7 +359,29 @@ class Behavior:
                                 (20,23):'Fun',
                                 (23,24):'Home'}
         
-        self.fate = None
-        if person.occupation=='Worker':
-            self.fate = Adult_Life_Work_Day
+        test = {
+                    (0,8):'Home',
+                    (8,15):'Work',
+                    (15,24):'Home',
+                }
+#        self.fate = None
+#        if person.occupation=='Worker':
+#            self.fate = Adult_Life_Work_Day
+        self.fate = test
+    
+    def next_place_test (self,person,mintes):
+        hour = math.floor(mintes/60)
+        action = 'Home'
+        for times in self.fate:
+            if hour>=times[0] and hour<times[1]:
+                action = self.fate[times]
+                break
+        if action=='Home':
+            return person.home
+        else:
+            return person.work
+                
+            
+            
         
+    

@@ -1,0 +1,3 @@
+,Population,Min Age,Max Age,Infected,Infection Probability,Recovery Period
+0,120,18,85,0.04,0.9,10
+1,120,18,85,0.04,0.9,15
