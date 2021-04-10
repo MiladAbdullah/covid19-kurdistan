@@ -7,9 +7,8 @@ Created on Thu Apr 16 20:33:47 2020
 
 import matplotlib.pyplot as plt
 from PIL import Image
-import pandas as pn 
-
-import numpy
+from matplotlib.pyplot import figure
+import numpy as np
  
 def fig2data ( fig ):
     """
@@ -22,11 +21,11 @@ def fig2data ( fig ):
  
     # Get the RGBA buffer from the figure
     w,h = fig.canvas.get_width_height()
-    buf = numpy.frombuffer ( fig.canvas.tostring_argb(), dtype=numpy.uint8 )
+    buf = np.frombuffer ( fig.canvas.tostring_argb(), dtype=np.uint8 )
     buf.shape = ( w, h,4 )
  
     # canvas.tostring_argb give pixmap in ARGB mode. Roll the ALPHA channel to have it in RGBA mode
-    buf = numpy.roll ( buf, 3, axis = 2 )
+    buf = np.roll ( buf, 3, axis = 2 )
     return buf
 
 #
@@ -41,61 +40,86 @@ def fig2img ( fig ):
     w, h, d = buf.shape
     return Image.frombytes( "RGBA", ( w ,h ), buf.tostring( ) )
 
-# equivalent to rcParams['animation.html'] = 'html5'
 
-import real
-myw = real.World()
+def animate(world,behavior,days):
+    images=[]
+    for i in range(days):
+        img= world.run_day(behavior)
+        images.extend(img)
+    return images
 
-images=[]
-plots=[]
-#
-#def animate(minutes):
-#    figure=  plt.figure(num=None, figsize=(2,2), dpi=200)
-#    figure.patch.set_alpha(0)
-#    ax1 = myw.draw_places(figure)
-#    figure.add_axes(ax1)
-#    for i in range(minutes):
-#        myw.move_people()
-#        ax2 = myw.show_people(figure)
-#        figure.add_axes(ax2)
-#        #
-#        
-#        #plt.savefig('../life/test/p%s'%i)
-#        plt.cla()
-#
-#
-def animate(minutes):
-    for i in range(minutes):
-        img= myw.show_world()
-        #fig = plt.figure(num=None, figsize=(2,2), dpi=200)
-        x= myw.daily_report['Total Infected']
-        #ax = Axes(fig)
-        #ax.plot(x)
-        #fig.add_axes(x)
 
+def show_plots(world):
+    plots=[]
+    plt.ioff()
+    xlim = len(world.reports['Daily Report'])
+    for i in range(1,xlim):
+
+        x= figure(num=None, figsize=(6, 5), dpi=100, facecolor='w', edgecolor='k')
+        a= world.reports['Daily Report']['Active Cases'][0:i]
+        b= world.reports['Daily Report']['Total Recovered'][0:i]
+        c= world.reports['Daily Report']['Total Death'][0:i]
+        d= world.reports['Daily Report']['Total Infected'][0:i]
+        x1 = [i for i in range(0,i)]
+        # plotting the line 1 points 
+        plt.plot(x1, a,color='blue', label = "Active Cases")
+        plt.plot(x1, b,color='green', label = "Total Recovered")
+        plt.plot(x1, c,color='red', label = "Total Death")
+        plt.fill_between(x1,d ,color='yellow', label = "Total Cases")
+        plt.xlim([0,xlim])
+        plt.xticks(x1)
+        plt.ylim([0,world.Settings['Population']])
+        plt.xlabel('Day')
+        # Set the y axis label of the current axis.
+        plt.ylabel('Cases')
+        # Set a title of the current axes.
+        plt.title('COVID-19 Event Reports ')
+        # show a legend on the plot
+        plt.legend()
+        # Display a figure.
+        plots.append(fig2img(x))
+        plt.cla()   # Clear axis
+        plt.clf()   # Clear figure
+        plt.close()
+    return plots
+
+
+def make_video(images, filename, fps):
+    """
+    Create a video from a list of images.
+ 
+    @param      outvid      output video
+    @param      images      list of images to use in the video
+    @param      fps         frame per second
+    @param      size        size of each frame
+    @param      is_color    color
+    @param      format      see http://www.fourcc.org/codecs.php
+    @return                 see http://opencv-python-tutroals.readthedocs.org/en/latest/py_tutorials/py_gui/py_video_display/py_video_display.html
+ 
+    The function relies on http://opencv-python-tutroals.readthedocs.org/en/latest/.
+    By default, the video will have the size of the first image.
+    It will resize every image to this size before adding them to the video.
+    """
+    import cv2
+    size = None
+    vid = None
+    for img in images:
+        frame = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+        if vid is None:
+            if size is None:
+                frame_height,frame_width = frame.shape[:2]
+            vid = cv2.VideoWriter(filename,cv2.VideoWriter_fourcc('M','J','P','G'), fps, (frame_width,frame_height))
+        vid.write(frame)
+    vid.release()
+    return vid
         
-        
-        plt.ioff()
-        fig, ax = plt.subplots(figsize=(5, 3))
-        ax.plot(x)
-        ax.set_title('COVID-19')
-        #ax.legend(loc='upper left')
-        ax.set_ylabel('Total Cases')
-        ax.set_xlim(xmin=0, xmax=minutes)
-        ax.set_ylim(ymin=0, ymax=myw.Settings['Population'])
-        im = fig2img ( fig )
-        plots.append(im)
-        images.append(img)
-        plt.cla()
-    
-animate(200)
-pn.DataFrame(myw.daily_report).to_csv('Karezan/daily_report.csv')
-pn.DataFrame(myw.infected_log).to_csv('Karezan/infected_log.csv')
-pn.DataFrame(myw.Settings).to_csv('Karezan/info.csv')
+def create_animation(world,behavior,days,folder):
+    images = animate(world,behavior,days)
 
+    frame_per_second = 300
+    make_video(images,'%s/world.avi'%folder,frame_per_second)
 
-images[0].save('../life/Karezan/Karezan_Stay_at_Home.gif',
-               save_all=True, append_images=images[1:], optimize=True, duration=100, loop=0)
+    plots = show_plots(world)
+    world.save_reports(folder)
 
-plots[0].save('../life/Karezan/Start_from_4.gif',
-               save_all=True, append_images=plots[1:], optimize=True, duration=100, loop=0)
+    make_video(plots,'%s/chart.avi'%folder,1)
