@@ -1,0 +1,103 @@
+                       ExponentialSmoothing Model Results                       
+================================================================================
+Dep. Variable:                    endog   No. Observations:                   61
+Model:             ExponentialSmoothing   SSE                           4740.574
+Optimized:                         True   AIC                            269.535
+Trend:                             None   BIC                            273.757
+Seasonal:                          None   AICC                           270.250
+Seasonal Periods:                  None   Date:                 Thu, 17 Sep 2020
+Box-Cox:                          False   Time:                         23:35:05
+Box-Cox Coeff.:                    None                                         
+==============================================================================
+                       coeff                 code              optimized      
+------------------------------------------------------------------------------
+smoothing_level            0.1000000                alpha                False
+initial_level              3.1381162                  l.0                 True
+------------------------------------------------------------------------------
+                       ExponentialSmoothing Model Results                       
+================================================================================
+Dep. Variable:                    endog   No. Observations:                   61
+Model:             ExponentialSmoothing   SSE                           4521.896
+Optimized:                         True   AIC                            266.655
+Trend:                             None   BIC                            270.876
+Seasonal:                          None   AICC                           267.369
+Seasonal Periods:                  None   Date:                 Thu, 17 Sep 2020
+Box-Cox:                          False   Time:                         23:35:05
+Box-Cox Coeff.:                    None                                         
+==============================================================================
+                       coeff                 code              optimized      
+------------------------------------------------------------------------------
+smoothing_level            0.2204810                alpha                 True
+initial_level              1.9693620                  l.0                 True
+------------------------------------------------------------------------------
+                       ExponentialSmoothing Model Results                       
+================================================================================
+Dep. Variable:                    endog   No. Observations:                   61
+Model:             ExponentialSmoothing   SSE                           7252.988
+Optimized:                         True   AIC                            295.476
+Trend:                             None   BIC                            299.698
+Seasonal:                          None   AICC                           296.190
+Seasonal Periods:                  None   Date:                 Thu, 17 Sep 2020
+Box-Cox:                          False   Time:                         23:35:05
+Box-Cox Coeff.:                    None                                         
+==============================================================================
+                       coeff                 code              optimized      
+------------------------------------------------------------------------------
+smoothing_level            0.9000000                alpha                False
+initial_level              3.6117165                  l.0                 True
+------------------------------------------------------------------------------
+                              Holt Model Results                              
+==============================================================================
+Dep. Variable:                  endog   No. Observations:                   92
+Model:                           Holt   SSE                         491126.385
+Optimized:                       True   AIC                            797.605
+Trend:                       Additive   BIC                            807.693
+Seasonal:                        None   AICC                           798.594
+Seasonal Periods:                None   Date:                 Thu, 17 Sep 2020
+Box-Cox:                        False   Time:                         23:35:05
+Box-Cox Coeff.:                  None                                         
+==============================================================================
+                       coeff                 code              optimized      
+------------------------------------------------------------------------------
+smoothing_level            1.0000000                alpha                 True
+smoothing_slope            0.4720194                 beta                 True
+initial_level              703.11038                  l.0                 True
+initial_slope              76.887419                  b.0                 True
+------------------------------------------------------------------------------
+                              Holt Model Results                              
+==============================================================================
+Dep. Variable:                  endog   No. Observations:                   92
+Model:                           Holt   SSE                         505709.739
+Optimized:                       True   AIC                            802.298
+Trend:                 Multiplicative   BIC                            814.906
+Seasonal:                        None   AICC                           803.631
+Seasonal Periods:                None   Date:                 Thu, 17 Sep 2020
+Box-Cox:                        False   Time:                         23:35:05
+Box-Cox Coeff.:                  None                                         
+==============================================================================
+                       coeff                 code              optimized      
+------------------------------------------------------------------------------
+smoothing_level            1.0000000                alpha                 True
+smoothing_slope            0.4401680                 beta                 True
+initial_level              712.66602                  l.0                 True
+initial_slope              1.0944817                  b.0                 True
+damping_slope              0.9790252                  phi                 True
+------------------------------------------------------------------------------
+                              Holt Model Results                              
+==============================================================================
+Dep. Variable:                  endog   No. Observations:                   92
+Model:                           Holt   SSE                        7674831.333
+Optimized:                       True   AIC                           1050.513
+Trend:                 Multiplicative   BIC                           1060.601
+Seasonal:                        None   AICC                          1051.502
+Seasonal Periods:                None   Date:                 Thu, 17 Sep 2020
+Box-Cox:                        False   Time:                         23:35:05
+Box-Cox Coeff.:                  None                                         
+==============================================================================
+                       coeff                 code              optimized      
+------------------------------------------------------------------------------
+smoothing_level            0.2278481                alpha                False
+smoothing_slope            0.2151899                 beta                False
+initial_level              682.50225                  l.0                 True
+initial_slope              1.1036677                  b.0                 True
+------------------------------------------------------------------------------
