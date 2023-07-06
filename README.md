@@ -42,4 +42,5 @@ To cite:
 	langid = {english},
 	note = {Number: 03},
 	keywords = {Forecasting, {AI} Simulations, {COVID}-19, Iraq, Kurdistan Region, Time Series Modelling},
-}```
+}
+```
