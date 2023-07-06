@@ -25,6 +25,7 @@ Each world is simulated for 20 days of virtual life. In the Figure 8 we can see 
 Copyright © 2021 Abdullah et al. This is an open-access article distributed under the Creative Commons Attribution License, which permits unrestricted use, distribution, and reproduction in any medium, provided the original work is properly cited.
 
 To cite:
+```
 @article{abdullah_time_2021,
 	title = {Time Series Modelling and Simulating the Lockdown Scenarios of {COVID}-19 in Kurdistan Region of Iraq},
 	volume = {15},
@@ -41,4 +42,4 @@ To cite:
 	langid = {english},
 	note = {Number: 03},
 	keywords = {Forecasting, {AI} Simulations, {COVID}-19, Iraq, Kurdistan Region, Time Series Modelling},
-}
+}```
