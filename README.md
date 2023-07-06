@@ -23,3 +23,22 @@ The simulated world has a population of 100 people where only one of them is inf
 Each world is simulated for 20 days of virtual life. In the Figure 8 we can see all four scenarios at one glance after one week of simulated life when the time of their virtual world has been stopped at 15:30. Each home has number of inhabitants and they form a family. The simulation did not take in account that the recovered citizens could be once more infected with the virus, as no available report support or refutes that possibility. The world is re-paused at day 11, on 9:30 shown in Figure 9. Should we compare both observations on the level of freedom at 2 and 3, we could see that at beginning, there is not a significant change in the number of infected, and mostly it relies on the random effects. However, on day 11, it is shown that when the level of freedom is set to 3, it provides a more dangerous situation to the area. In all cases, the best option of such community is to stay at home in the case that unknown virus carriers are in the region. It is also clear that with no applied movement restriction, the entire population of a small zone can be 100% affected in less than a week.
 
 Copyright © 2021 Abdullah et al. This is an open-access article distributed under the Creative Commons Attribution License, which permits unrestricted use, distribution, and reproduction in any medium, provided the original work is properly cited.
+
+To cite:
+@article{abdullah_time_2021,
+	title = {Time Series Modelling and Simulating the Lockdown Scenarios of {COVID}-19 in Kurdistan Region of Iraq},
+	volume = {15},
+	rights = {Copyright (c) 2021 Milad Ashqi  Abdullah, Kamal Kolo, Peyman  Aspoukeh, Rahel  Hamad, James R.  Bailey},
+	issn = {1972-2680},
+	url = {https://jidc.org/index.php/journal/article/view/33839712},
+	doi = {10.3855/jidc.13993},
+	pages = {370--381},
+	number = {3},
+	journaltitle = {The Journal of Infection in Developing Countries},
+	author = {Abdullah, Milad and Kolo, Kamal and Aspoukeh, Peyman and Hamad, Rahel and Bailey, James R.},
+	urldate = {2023-03-22},
+	date = {2021-03-31},
+	langid = {english},
+	note = {Number: 03},
+	keywords = {Forecasting, {AI} Simulations, {COVID}-19, Iraq, Kurdistan Region, Time Series Modelling},
+}
